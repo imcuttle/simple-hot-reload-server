@@ -1,0 +1,21 @@
+{
+  "name": "simple-hot-reload-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node . test"
+  },
+  "bin": {
+    "hrs": "node index.js"
+  },
+  "keywords": ["hot", "reload", "server"],
+  "author": "moyu",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.2",
+    "minimist": "^1.2.0",
+    "morgan": "^1.8.1",
+    "ws": "^2.2.2"
+  }
+}
