@@ -1,15 +1,19 @@
 {
   "name": "simple-hot-reload-server",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.2",
+  "description": "Set up a server for frontend files & Watch frontend files.",
   "main": "index.js",
   "scripts": {
     "test": "node . test"
   },
   "bin": {
-    "hrs": "node index.js"
+    "hrs": "index.js"
   },
-  "keywords": ["hot", "reload", "server"],
+  "keywords": [
+    "hot",
+    "reload",
+    "server"
+  ],
   "author": "moyu",
   "license": "MIT",
   "dependencies": {
@@ -17,5 +21,17 @@
     "minimist": "^1.2.0",
     "morgan": "^1.8.1",
     "ws": "^2.2.2"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moyuyc/simple-hot-reload-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/moyuyc/simple-hot-reload-server/issues"
+  },
+  "homepage": "https://github.com/moyuyc/simple-hot-reload-server#readme"
 }
