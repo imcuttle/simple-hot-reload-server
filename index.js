@@ -30,14 +30,23 @@ if (options.version) {
     console.log(require('./package.json').version);
     return;
 }
+const fs = require('fs');
+if (!fs.existsSync(options.path) || !fs.statSync(options.path).isDirectory()) {
+    console.error(`${options.path} not existed or is NOT a directory`);
+    return 1;
+}
 
 const app = require('./libs/http-server');
 const createWss = require('./libs/websocket');
 const connect = require('./helpers/connect-ws-server');
+const ft = require('./helpers/file-type');
 const FileWatcher = require('./libs/FileWatcher');
 
-const server = connect(app, options.port);
-const wss = createWss({server});
+const server = connect(app, options.port, function () {
+    console.log('Map Data => http://localhost:%d%s', options.port, app.MAP_ROUTE)
+});
+const wss = createWss(options.path, {server});
+
 
 app.setStatic({
     path: options.path,
@@ -46,10 +55,32 @@ app.setStatic({
     }
 });
 
+
 const watcher = new FileWatcher(options.path);
 watcher.on('change', (eventType, filename) => {
-    console.log(`Detected file's change: ${filename} => ${eventType}`);
-    wss.broadcast(['log', 'reload'], [`${filename} => ${eventType}`, null], (client) => {
-        return client.pathname == filename;
-    });
+    const log = () => console.log(`Detected file's change: ${filename} => ${eventType}`);
+    if (ft.isHTML(filename)) {
+        const absolutePath = path.join(options.path, filename);
+        app.setPathMap(absolutePath, true).then(() => {
+            log();
+            wss.broadcast(['log', 'reload'], [`${filename} => ${eventType}`, null], (client) => {
+                return client.pathname == filename;
+            });
+        });
+    } else {
+        app.pathMap.keys().forEach(function (htmlPath) {
+            const absolutePath = path.join(options.path, filename);
+            if (app.pathMap.get(htmlPath)[absolutePath]) {
+                if (htmlPath.startsWith(options.path)) {
+                    log();
+                    let relativePath = htmlPath.substr(options.path.length);
+                    relativePath = relativePath.startsWith('/') ? relativePath.substr(1) : relativePath;
+                    wss.broadcast(['log', 'reload'], [`${filename} => ${eventType}`, null], (client) => {
+                        return client.pathname == relativePath;
+                    });
+                }
+            }
+        });
+    }
+
 });

@@ -3,6 +3,8 @@
  */
 const WebSocket = require('ws');
 const url = require('url');
+const path = require('path');
+const app = require('./http-server');
 
 const obj = (type, data) => {
     if (Array.isArray(type)) {
@@ -13,7 +15,7 @@ const obj = (type, data) => {
     return JSON.stringify({type, data})
 };
 
-module.exports = function run (options) {
+module.exports = function run (dirPath, options) {
     const wss = new WebSocket.Server(options);
 
     function broadcast(type="log", data, filter=()=>true) {
@@ -25,7 +27,7 @@ module.exports = function run (options) {
     }
 
     function initSocket (ws) {
-        const PREFIX = "[HRS] "
+        const PREFIX = "";//"[HRS] "
         ws.log = function (data) {
             ws.send(obj('log', PREFIX+data))
         }
@@ -41,11 +43,12 @@ module.exports = function run (options) {
             data = JSON.parse(data);
             if (data.type == 'register') {
                 let pathname = url.parse(data.data).pathname;
-                if (pathname == '/') {
-                    pathname += 'index.html';
+                if (!/\.(html|htm)$/.test(pathname)) {
+                    pathname += (pathname.endsWith('/')?'':'/') + 'index.html';
                 }
                 pathname = pathname.substr(1);
                 ws.pathname = pathname;
+                app.setPathMap(path.join(dirPath, pathname));
             }
         });
     });

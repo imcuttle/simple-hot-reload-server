@@ -1,9 +1,21 @@
 /**
  * Created by moyu on 2017/3/28.
  */
+const cheerio = require('cheerio');
+const path = require('path');
+const url = require('url');
+const fs = require('fs');
+const st = require('../helpers/string-type');
 
-function HTMLEditor(html) {
+Object.defineProperty(cheerio.prototype, 'outerHTML', {
+    get: function () {
+        return this.clone().wrap('<container />').parent().html();
+    }
+});
+
+function HTMLEditor(html, filename) {
     this.html = html;
+    this.filename = filename;
     this.__contents__ = [];
 }
 
@@ -12,8 +24,41 @@ function HTMLEditor(html) {
 HTMLEditor.prototype.append = push;
 HTMLEditor.prototype._generateContent = generateContent;
 HTMLEditor.prototype.getComputedHTML = getComputedHTML;
+HTMLEditor.prototype.getComputedPathMap = getComputedPathMap;
 
 module.exports  = HTMLEditor;
+
+function getComputedPathMap() {
+    const $ = cheerio.load(this.html, {decodeEntities: true});
+    let dirName = path.dirname(this.filename);
+
+    const pathMap = {};
+    $('script').map((index, dom) => {
+        let src = $(dom).attr('src');
+        if (st.isUrl(src)) return;
+        src = url.parse(src).pathname;
+        let absolutePath = path.join(dirName, src);
+        if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
+            return;
+        }
+
+        pathMap[absolutePath] = src;
+    });
+
+    $('link').map((index, dom) => {
+        let src = $(dom).attr('href');
+        if (st.isUrl(src)) return;
+        src = url.parse(src).pathname;
+        let absolutePath = path.join(dirName, src);
+        if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
+            return;
+        }
+
+        pathMap[absolutePath] = src;
+    });
+
+    return pathMap;
+}
 
 function getComputedHTML() {
     let html = this.html;

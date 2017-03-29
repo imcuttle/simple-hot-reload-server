@@ -1,6 +1,6 @@
 # Simple Hot Reload Server
 
-Set up a server for frontend files & Watch frontend files.
+Set up a server for frontend files(html/css/js/image/...) & Watch frontend files.
 
 connected server and client by WebSocket.
 

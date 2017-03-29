@@ -3,9 +3,10 @@
  */
 const http = require('http');
 
-module.exports = function (app, port) {
+module.exports = function (app, port, callback) {
     const server = http.createServer(app).listen(port, () => {
         console.log('Server Address: http://localhost:%d', server.address().port);
+        callback && callback();
     });
     return server;
 }
