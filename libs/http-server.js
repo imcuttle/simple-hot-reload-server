@@ -7,6 +7,7 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const readFilePromise = require('../helpers/readfile-promise');
+const HTMLEditor = require('../libs/HTMLEditor');
 const ft = require('../helpers/file-type');
 
 const app = express();
@@ -43,15 +44,11 @@ app.setStatic = function (options) {
             readFilePromise(filename)
                 .then(buffer => {
                     let html = buffer.toString();
-                    const closedBodyMarketReg = /\<\s*\/\s*body\s*\>[\s\S]*$/;
-                    const index = html.search(closedBodyMarketReg);
                     const clientScriptSrc = `http://localhost:${injectGlobalData.port}/__hrs__/client-script.js`;
-                    if (index >= 0) {
-                        html = html.slice(0, index)
-                            + `<script type="application/javascript">window.__HRS_DATA__=${JSON.stringify(injectGlobalData)}</script>`
-                            + `<script type="application/javascript" src="${clientScriptSrc}"></script>`
-                            + html.slice(index);
-                    }
+                    html = new HTMLEditor(html)
+                        .append(`window.__HRS_DATA__=${JSON.stringify(injectGlobalData)}`, 'js')
+                        .append(clientScriptSrc, 'jsSrc')
+                        .getComputedHTML();
                     res.contentType('text/html; charset=utf-8');
                     res.send(html);
                 })
