@@ -7,7 +7,7 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const readFilePromise = require('../helpers/readfile-promise');
-const HTMLEditor = require('../libs/HTMLEditor');
+const HTMLEditor = require('./HtmlEditor');
 const ft = require('../helpers/file-type');
 const KVStorage = require('../helpers/KVStorage');
 

@@ -35,7 +35,7 @@ function getComputedPathMap() {
     const pathMap = {};
     $('script').map((index, dom) => {
         let src = $(dom).attr('src');
-        if (st.isUrl(src)) return;
+        if (!src || st.isUrl(src)) return;
         src = url.parse(src).pathname;
         let absolutePath = path.join(dirName, src);
         if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
@@ -47,7 +47,7 @@ function getComputedPathMap() {
 
     $('link').map((index, dom) => {
         let src = $(dom).attr('href');
-        if (st.isUrl(src)) return;
+        if (!src || st.isUrl(src)) return;
         src = url.parse(src).pathname;
         let absolutePath = path.join(dirName, src);
         if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
