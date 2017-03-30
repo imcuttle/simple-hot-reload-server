@@ -3,6 +3,33 @@
  */
 
 !function (DATA) {
+    var dataHrsLocalScript = document.querySelector('script[hrs-local]');
+    if (dataHrsLocalScript) {
+        DATA = DATA || {};
+        var src = dataHrsLocalScript.getAttribute('src');
+        var mather = src.match(/[^\?]+:(\d+)/);
+        if (mather.length>=2) {
+            DATA.port = mather[1];
+        } else {
+            DATA.port = 80;
+        }
+    }
+    function getRegisterData() {
+        if (dataHrsLocalScript) {
+            var root = dataHrsLocalScript.getAttribute('hrs-root');
+            return {
+                type: 'cors',
+                value: dataHrsLocalScript.getAttribute('hrs-local'),
+                root: root && root.trim()
+            }
+        } else {
+            return {
+                type: 'same-origin',
+                value: location.pathname
+            }
+        }
+    }
+
     var PREFIX = '[HRS] ';
     var methods = {
         error: function error(message) {
@@ -14,7 +41,7 @@
         reload: function () {
             location.reload();
         }
-    }
+    };
 
 
     if (!DATA) {
@@ -39,7 +66,9 @@
             if (connect_timer != null) {
                 clearInterval(connect_timer);
             }
-            socket.send(JSON.stringify({type: 'register', data: location.pathname}));
+            socket.send(JSON.stringify({
+                type: 'register', data: getRegisterData()//location.pathname
+            }));
         });
 
         socket.addEventListener('close', function (event) {
@@ -70,4 +99,4 @@
 
     connect();
 
-}(window.__HRS_DATA__)
+}(window.__HRS_DATA__);

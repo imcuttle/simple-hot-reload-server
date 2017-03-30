@@ -41,12 +41,10 @@ const createWss = require('./libs/websocket');
 const connect = require('./helpers/connect-ws-server');
 const ft = require('./helpers/file-type');
 const FileWatcher = require('./libs/FileWatcher');
-
 const server = connect(app, options.port, function () {
     console.log('Map Data => http://localhost:%d%s', options.port, app.MAP_ROUTE)
 });
 const wss = createWss(options.path, {server});
-
 
 app.setStatic({
     path: options.path,
@@ -55,32 +53,34 @@ app.setStatic({
     }
 });
 
-
-const watcher = new FileWatcher(options.path);
-watcher.on('change', (eventType, filename) => {
-    const log = () => console.log(`Detected file's change: ${filename} => ${eventType}`);
+exports.handleFileChange = function (eventType, filename) {
+    const log = () => console.log(`Detected file's change: ${path.join(this.filename, filename)} => ${eventType}`);
+    const filter = (client, name=filename) => {
+        return path.isAbsolute(client.registerData.value)
+            ? client.registerData.value == path.join(this.filename, name) : client.registerData.value == name
+    };
     if (ft.isHTML(filename)) {
-        const absolutePath = path.join(options.path, filename);
+        const absolutePath = path.join(this.filename, filename);
         app.setPathMap(absolutePath, true).then(() => {
             log();
-            wss.broadcast(['log', 'reload'], [`${filename} => ${eventType}`, null], (client) => {
-                return client.pathname == filename;
-            });
+            wss.broadcast(['log', 'reload'], [`${filename} => ${eventType}`, null], filter);
         });
     } else {
-        app.pathMap.keys().forEach(function (htmlPath) {
-            const absolutePath = path.join(options.path, filename);
+        app.pathMap.keys().forEach((htmlPath)  => {
+            const absolutePath = path.join(this.filename, filename);
             if (app.pathMap.get(htmlPath)[absolutePath]) {
-                if (htmlPath.startsWith(options.path)) {
+                if (htmlPath.startsWith(this.filename)) {
                     log();
-                    let relativePath = htmlPath.substr(options.path.length);
+                    let relativePath = htmlPath.substr(this.filename.length);
                     relativePath = relativePath.startsWith('/') ? relativePath.substr(1) : relativePath;
                     wss.broadcast(['log', 'reload'], [`${filename} => ${eventType}`, null], (client) => {
-                        return client.pathname == relativePath;
+                        return filter(client, relativePath);
                     });
                 }
             }
         });
     }
+};
 
-});
+const watcher = new FileWatcher(options.path);
+watcher.on('change', exports.handleFileChange);
