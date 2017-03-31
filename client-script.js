@@ -33,10 +33,12 @@
     var PREFIX = '[HRS] ';
     var methods = {
         error: function error(message) {
-            console.error(new Error(PREFIX + message))
+            var sender = debug ? console.__origin__.error : console.error;
+            sender(new Error(PREFIX + message));
         },
         log: function error(message) {
-            console.log(PREFIX + message);
+            var sender = debug ? console.__origin__.log : console.log;
+            sender(PREFIX + message);
         },
         reload: function () {
             location.reload();
@@ -48,6 +50,13 @@
         methods.error('The global data has not existed!');
     }
 
+    var send = function (data, type) {
+        type = type || 'log';
+        connect_socket && connect_socket.send(JSON.stringify({type: type, data: data}));
+    };
+
+    window.hrs_send = window.hrs_send || send;
+
     var connect_timer = null;
     var connect_socket = null;
 
@@ -57,7 +66,7 @@
             connect_socket = null;
         }
 
-        connect_socket = new WebSocket("ws://localhost:"+DATA.port);
+        connect_socket = new WebSocket("ws://"+location.hostname+":"+DATA.port);
 
         var socket = connect_socket;
 
@@ -98,5 +107,58 @@
     }
 
     connect();
+
+    function getQueryJson(query) {
+        query = query.trim();
+        if (query.startsWith('?')) {
+            query = query.substr(1);
+        }
+        var kvStrs = query.split('&');
+        var queryJson = {};
+        kvStrs.map(function (kv) {
+            kv = kv.split('=');
+            queryJson[kv[0]] = kv[1];
+        })
+        return queryJson;
+    }
+
+    /* query string tag ?debug=true&reload=false */
+    var debug = false;
+    if (location.search) {
+        var queryJson = getQueryJson(location.search);
+        if(queryJson['debug'] && queryJson['debug'] != 'false') {
+            debug = true;
+            debugEntry();
+        }
+        if(queryJson['reload'] == 'false') {
+            methods.reload = function () {}
+        }
+
+    }
+
+
+    function debugEntry() {
+
+        Object.keys(console).forEach(function (k) {
+            console.__origin__ = console.__origin__ || {}
+            console.__origin__[k] = console[k];
+            var originMethod = console.__origin__[k];
+            console[k] = function () {
+                var args = [].slice.call(arguments).map(function (arg) {
+                    if (arg instanceof Error) {
+                        return arg.message;
+                    }
+                    return arg;
+                });
+                send(args, k);
+                originMethod.apply(this, arguments);
+            }
+        });
+
+        window.addEventListener('error', function (evt) {
+            console.error(evt.error);
+        });
+    }
+
 
 }(window.__HRS_DATA__);

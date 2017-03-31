@@ -64,7 +64,7 @@ app.setStatic = function (options) {
             readFilePromise(filename)
                 .then(buffer => {
                     let html = buffer.toString();
-                    const clientScriptSrc = `http://localhost:${injectGlobalData.port}/__hrs__/client-script.js`;
+                    const clientScriptSrc = `/__hrs__/client-script.js`;
                     let editor = new HTMLEditor(html, filename);
                     if (!pathMap.exists(filename)) {
                         pathMap.set(filename, editor.getComputedPathMap())

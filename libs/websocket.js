@@ -89,6 +89,14 @@ module.exports = function run (dirPath, options) {
 
 
                 ws.registerData = json;
+            } else {
+                if (console[data.type]) {
+                    var tag = data.type[0].toUpperCase() + data.type.substr(1)
+                    process.stdout.write(tag+': ');
+                    console[data.type].apply(null, json);
+                } else {
+                    console.log('received data from client: %s', JSON.stringify(json));
+                }
             }
         });
     });

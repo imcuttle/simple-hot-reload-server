@@ -1,6 +1,6 @@
 {
   "name": "simple-hot-reload-server",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Set up a server for frontend files & Watch frontend files.",
   "main": "index.js",
   "scripts": {
