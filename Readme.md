@@ -47,5 +47,5 @@ Options:
     >
     </script>
     ```
-    `hrs-local`: map to local html file
+    `hrs-local`: map to local html file  
     `hrs-root`: node server detect the directory for hot reload.
