@@ -1,13 +1,15 @@
 {
   "name": "simple-hot-reload-server",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Set up a server for frontend files & Watch frontend files.",
-  "main": "index.js",
   "scripts": {
-    "test": "node . test"
+    "test": "node . test",
+    "dev": "babel src -d dist -w",
+    "build": "babel src -d dist",
+    "prepublish": "npm run build"
   },
   "bin": {
-    "hrs": "index.js"
+    "hrs": "dist/index.js"
   },
   "keywords": [
     "hot",
@@ -26,7 +28,9 @@
   "directories": {
     "test": "test"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/moyuyc/simple-hot-reload-server.git"

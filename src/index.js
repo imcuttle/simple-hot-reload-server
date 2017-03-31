@@ -23,17 +23,17 @@ if (options.help) {
 `
     );
 
-    return;
+    process.exit(0);
 }
 
 if (options.version) {
     console.log(require('./package.json').version);
-    return;
+    process.exit(0);
 }
 const fs = require('fs');
 if (!fs.existsSync(options.path) || !fs.statSync(options.path).isDirectory()) {
     console.error(`${options.path} not existed or is NOT a directory`);
-    return 1;
+    process.exit(1);
 }
 
 const app = require('./libs/http-server');
