@@ -62,9 +62,11 @@ function getComputedPathMap() {
 
 function getComputedHTML() {
     let html = this.html;
-    const closedBodyMarketReg = /\<\s*\/\s*body\s*\>[\s\S]*$/;
-    const index = html.search(closedBodyMarketReg);
+    // const closedBodyMarketReg = /\<\s*\/\s*body\s*\>[\s\S]*$/;
+    const headFirstMarketReg = /(\<\s*head\s*\>)/;
+    let index = html.search(headFirstMarketReg);
     if (index >= 0) {
+        index = index+RegExp.$1.length;
         html = html.slice(0, index)
             + this._generateContent()
             + html.slice(index);

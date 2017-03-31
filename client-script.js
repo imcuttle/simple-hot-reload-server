@@ -14,6 +14,7 @@
             DATA.port = 80;
         }
     }
+
     function getRegisterData() {
         if (dataHrsLocalScript) {
             var root = dataHrsLocalScript.getAttribute('hrs-root');
@@ -34,25 +35,27 @@
     var methods = {
         error: function error(message) {
             var sender = debug ? console.__origin__.error : console.error;
-            sender(new Error(PREFIX + message));
+            sender.call(console, new Error(PREFIX + message));
         },
-        log: function error(message) {
+        log: function log(message) {
             var sender = debug ? console.__origin__.log : console.log;
-            sender(PREFIX + message);
+            sender.call(console, PREFIX + message);
+
         },
         reload: function () {
             location.reload();
         }
     };
 
-
     if (!DATA) {
         methods.error('The global data has not existed!');
     }
 
     var send = function (data, type) {
+
         type = type || 'log';
-        connect_socket && connect_socket.send(JSON.stringify({type: type, data: data}));
+        connect_socket && connect_socket.readyState === WebSocket.OPEN
+        && connect_socket.send(JSON.stringify({type: type, data: data}));
     };
 
     window.hrs_send = window.hrs_send || send;
@@ -67,7 +70,6 @@
         }
 
         connect_socket = new WebSocket("ws://"+location.hostname+":"+DATA.port);
-
         var socket = connect_socket;
 
         // Connection opened
@@ -96,12 +98,17 @@
         // Listen for messages
         socket.addEventListener('message', function (event) {
             var data = JSON.parse(event.data);
-            if (!Array.isArray(data.type)) {
+            if( Object.prototype.toString.call( data.type ) !== '[object Array]' ) {
                 data.type = [data.type];
                 data.data = [data.data];
             }
+
             data.type.forEach(function (name, index) {
-                methods[name](data.data[index]);
+                try {
+                    methods[name](data.data[index]);
+                } catch (ex) {
+                    alert('[HRS]: ' + ex.stack);
+                }
             });
         });
     }
@@ -110,9 +117,10 @@
 
     function getQueryJson(query) {
         query = query.trim();
-        if (query.startsWith('?')) {
+        if (query[0] == '?') {
             query = query.substr(1);
         }
+
         var kvStrs = query.split('&');
         var queryJson = {};
         kvStrs.map(function (kv) {
@@ -124,6 +132,7 @@
 
     /* query string tag ?debug=true&reload=false */
     var debug = false;
+
     if (location.search) {
         var queryJson = getQueryJson(location.search);
         if(queryJson['debug'] && queryJson['debug'] != 'false') {
@@ -137,26 +146,45 @@
 
 
     function debugEntry() {
+
+        function overConsoleMethod(name) {
+            var originMethod = console.__origin__[name] = console[name];
+            if (typeof originMethod === 'function') {
+                console[name] = function () {
+                    var args = [].slice.call(arguments).map(function (arg) {
+                        if (arg instanceof Error) {
+                            return arg.message;
+                        }
+                        return arg;
+                    });
+                    send(args, name);
+                    originMethod.apply(this, arguments);
+                }
+            }
+        }
+
         Object.keys(console).forEach(function (k) {
             console.__origin__ = console.__origin__ || {}
             console.__origin__[k] = console[k];
-            var originMethod = console.__origin__[k];
-            console[k] = function () {
-                var args = [].slice.call(arguments).map(function (arg) {
-                    if (arg instanceof Error) {
-                        return arg.message;
-                    }
-                    return arg;
-                });
-                send(args, k);
-                originMethod.apply(this, arguments);
-            }
+            overConsoleMethod(k);
         });
+
+        var origin = console.__origin__;
+        if (!origin['log']) {
+            overConsoleMethod('log');
+        }
+        if (!origin['error']) {
+            overConsoleMethod('error');
+        }
+        if (!origin['info']) {
+            overConsoleMethod('info');
+        }
+        if (!origin['dir']) {
+            overConsoleMethod('dir');
+        }
 
         window.addEventListener('error', function (evt) {
             console.error(evt.error);
         });
     }
-
-
 }(window.__HRS_DATA__);
