@@ -4,7 +4,7 @@ Set up a server for frontend files(html/css/js/favicon) & Watch frontend files.
 
 connected server and client by WebSocket.
 
-*Important: Only support filename ends with `.html/.htm`, and which is required by html/htm*
+*Important: Only support files which filename ends with `.html/.htm` or is required by html/htm*
 
 
 **Hot Reload**
