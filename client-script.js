@@ -133,12 +133,10 @@
         if(queryJson['reload'] == 'false') {
             methods.reload = function () {}
         }
-
     }
 
 
     function debugEntry() {
-
         Object.keys(console).forEach(function (k) {
             console.__origin__ = console.__origin__ || {}
             console.__origin__[k] = console[k];

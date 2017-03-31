@@ -28,8 +28,10 @@ Options:
     ```
 2. open html in address
     ```
-    http://localhost:8082/where
+    http://localhost:8082/where?dubug=true&reload=true
     ```
+    `debug`: whether `console.log/error/...` on browser could print on node server. **default: false**
+    `reload`: whether reload when file changed. **default: true**
 
 **Support CORS**
 1. set up an node server
