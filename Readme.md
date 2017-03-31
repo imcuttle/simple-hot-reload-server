@@ -4,8 +4,11 @@ Set up a server for frontend files(html/css/js/image/...) & Watch frontend files
 
 connected server and client by WebSocket.
 
+
+**Hot Reload**
 ![](https://ooo.0o0.ooo/2017/03/31/58de5c97bfa0b.jpg)
 
+**Debugger**
 ![](https://ooo.0o0.ooo/2017/03/31/58de5c83f0eac.jpg)
 
 
