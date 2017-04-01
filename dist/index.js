@@ -80,7 +80,13 @@ exports.handleFileChange = function (eventType, filename) {
     }
 };
 
-// process.on('uncaughtException', console.error);
+var configPath = path.resolve('./hrs.config.js');
+if (fs.existsSync(configPath)) {
+    var config = require(configPath);
+    var configWorker = require('./libs/config-worker');
+    configWorker(config, { app: app });
+    console.log("Config is Working!");
+}
 
 var watcher = new FileWatcher(options.path);
 watcher.on('change', exports.handleFileChange);

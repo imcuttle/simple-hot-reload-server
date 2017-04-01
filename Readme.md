@@ -4,6 +4,8 @@ Set up a server for frontend files(html/css/js/favicon) & Watch frontend files.
 
 connected server and client by WebSocket.
 
+## Feature
+
 - **Hot Reload**
 ![](https://ooo.0o0.ooo/2017/03/31/58de5c97bfa0b.jpg)
 
@@ -32,6 +34,24 @@ connected server and client by WebSocket.
 2. Total  
     `http://localhost:8082/__hrs__/map`
 
+- **Forward Request**  
+    `http://localhost:8082/__hrs__/forward?url=http://blog.moyuyc.xyz/head.jpg`
+    
+- **Config**  
+    Be Named `hrs.config.js` on current work directory.
+    ```js
+    module.exports = {
+        setUp: function (app) {
+            /* app is an express server object. */
+          
+            // http://localhost:8082/test
+            app.get('/test', function (req, res) {
+                res.end("TEST!");
+            });
+        }
+    };
+    ```
+
 ## Install
 
 ```bash
@@ -48,7 +68,7 @@ Options:
   -h --help                   how to use it.
 ```
 
-## Feature
+## Others
 
 **Support Local Server**  
 *Importance: Only support files which filename ends with `.html/.htm` or is required by html/htm*

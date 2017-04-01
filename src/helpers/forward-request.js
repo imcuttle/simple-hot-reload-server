@@ -30,6 +30,8 @@ function forwardRequest(req, res, url) {
     });
 
     forward_request.on('error', function (e) {
+        res.writeHead(500);
+        res.end('problem with request: ' + e.message);
         console.error('problem with request: ' + e.message);
     });
 
