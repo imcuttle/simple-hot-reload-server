@@ -43,6 +43,7 @@ const ft = require('./helpers/file-type');
 const FileWatcher = require('./libs/FileWatcher');
 const server = connect(app, options.port, function () {
     console.log('Map Data => http://localhost:%d%s', options.port, app.MAP_ROUTE)
+    console.log('File View => http://localhost:%d%s', options.port, app.FILE_VIEW_ROUTE)
 });
 const wss = createWss(options.path, {server});
 

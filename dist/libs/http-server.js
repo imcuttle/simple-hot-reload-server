@@ -13,6 +13,7 @@ var HTMLEditor = require('./HtmlEditor');
 var ft = require('../helpers/file-type');
 var KVStorage = require('../helpers/KVStorage');
 var forward = require('../helpers/forward-request');
+var dirMiddleware = require('../helpers/express-dir-middleware');
 
 var app = express();
 var pathMap = app.pathMap = new KVStorage();
@@ -23,6 +24,7 @@ app.use('/__hrs__/client-script.js', function (req, res, next) {
 });
 
 var MAP_ROUTE = app.MAP_ROUTE = '/__hrs__/map';
+var FILE_VIEW_ROUTE = app.FILE_VIEW_ROUTE = '/__hrs__/file';
 var FORWARD_ROUTE = app.FORWARD_ROUTE = '/__hrs__/forward';
 app.use(MAP_ROUTE, function (req, res, next) {
     res.json(pathMap.entries());
@@ -35,6 +37,7 @@ app.use(FORWARD_ROUTE, function (req, res, next) {
     }
     res.end('no url param');
 });
+
 app.setPathMap = function (absolutePath, force) {
     if (ft.isHTML(absolutePath)) {
         if (force || !pathMap.exists(absolutePath)) {
@@ -56,6 +59,11 @@ app.setStatic = function (options) {
     var dirPath = options.path;
     var serverPath = options.serverPath || '/';
     var injectGlobalData = options.injectGlobalData || {};
+
+    app.use(dirMiddleware({
+        redirect: true,
+        route: FILE_VIEW_ROUTE, root: dirPath, app: app
+    }));
 
     console.log('%s register on %s', dirPath, serverPath);
     app.use(serverPath, function handle(req, res, next) {

@@ -1,0 +1,23 @@
+extends layout.pug
+
+block content
+  table.table.table-responsive.table-hover
+    thead
+      tr
+        th="#"
+        th="Type"
+        th="Filename"
+        th="Modified Time"
+        th="Size"
+    tbody
+    - for (var i = 0; i < files.length; ++i) {
+      - var file = files[i];
+      - var href = route + path + (path.endsWith('/')?'':'/') + file.name;
+      tr(style="")
+        th(scope="row")= (i+1)
+        td= file.type
+        td
+          a(href= href)= file.name
+        td= file.mtime
+        td= file.size
+    - }

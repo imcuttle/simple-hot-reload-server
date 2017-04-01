@@ -13,6 +13,9 @@ connected server and client by WebSocket.
 **Debugger**
 ![](https://ooo.0o0.ooo/2017/03/31/58de5c83f0eac.jpg)
 
+**Files View (Easy to open page in root)**
+![](https://ooo.0o0.ooo/2017/04/01/58df85ceaeef5.jpg)
+
 
 ```bash
 npm install -g simple-hot-reload-server

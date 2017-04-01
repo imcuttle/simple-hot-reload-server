@@ -1,11 +1,11 @@
 {
   "name": "simple-hot-reload-server",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Set up a server for frontend files & Watch frontend files.",
   "scripts": {
     "test": "node . test",
-    "dev": "babel src -d dist -w",
-    "build": "babel src -d dist",
+    "dev": "babel src -d dist -w -D",
+    "build": "babel src -d dist -D",
     "prepublish": "npm run build"
   },
   "bin": {
@@ -23,6 +23,7 @@
     "express": "^4.15.2",
     "minimist": "^1.2.0",
     "morgan": "^1.8.1",
+    "pug": "^2.0.0-beta11",
     "ws": "^2.2.2"
   },
   "directories": {
