@@ -83,5 +83,7 @@ exports.handleFileChange = function (eventType, filename) {
     }
 };
 
+// process.on('uncaughtException', console.error);
+
 const watcher = new FileWatcher(options.path);
 watcher.on('change', exports.handleFileChange);

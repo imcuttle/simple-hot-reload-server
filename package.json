@@ -3,7 +3,7 @@
   "version": "1.0.10",
   "description": "Set up a server for frontend files & Watch frontend files.",
   "scripts": {
-    "test": "node . test",
+    "test": "node dist/index.js test",
     "dev": "babel src -d dist -w -D",
     "build": "babel src -d dist -D",
     "prepublish": "npm run build"

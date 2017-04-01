@@ -13,13 +13,13 @@ const getFilesStatPromise = (dirname) => {
             Promise.all(
                 files.map(
                     (name) => helper.statPromise(path.join(dirname, name))
-                    .then(stat => ({
-                        type: stat.isFile() ? "File": "Directory",
-                        size: stat.isFile() ? stat.size.toSize() : "-",
-                        name,
-                        mtime: new Date(stat.mtime).format(),
-                        ctime: new Date(stat.ctime).format(),
-                    }))
+                        .then(stat => ({
+                            type: stat.isFile() ? "File": "Directory",
+                            size: stat.isFile() ? stat.size.toSize() : "-",
+                            name,
+                            mtime: new Date(stat.mtime).format(),
+                            ctime: new Date(stat.ctime).format(),
+                        }))
                 )
             )
         );
@@ -60,13 +60,14 @@ module.exports = function (options) {
         pathname = pathname.replace(new RegExp(`^${route}`), '').trim();
         pathname = pathname == '' ? '/' : pathname;
         const filename = path.join(absolutePath, pathname);
+        // console.log(pathname);
         switch (pathname) {
             case '/': {
+                // root
                 getFilesStatPromise(filename)
                 .then(list => {
                     renderDirPage(pathname, list);
                 }).catch(error);
-                // root
                 break;
             }
             default: {
@@ -75,6 +76,16 @@ module.exports = function (options) {
                         if (stat.isDirectory()) {
                             return getFilesStatPromise(filename)
                                 .then(list => {
+                                    let parent = path.dirname(filename);
+                                    let parentStat = fs.statSync(parent);
+                                    list.unshift({
+                                        type: "Directory",
+                                        size: "-",
+                                        name: "..",
+                                        mtime: new Date(parentStat.mtime).format(),
+                                        ctime: new Date(parentStat.ctime).format(),
+                                    });
+
                                     renderDirPage(pathname, list);
                                 }).catch(error);
                         } else {
@@ -85,6 +96,7 @@ module.exports = function (options) {
                             }
                         }
                     })
+                    .catch(error)
             }
         }
 

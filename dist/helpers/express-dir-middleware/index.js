@@ -66,13 +66,14 @@ module.exports = function (options) {
         pathname = pathname.replace(new RegExp('^' + route), '').trim();
         pathname = pathname == '' ? '/' : pathname;
         var filename = path.join(absolutePath, pathname);
+        // console.log(pathname);
         switch (pathname) {
             case '/':
                 {
+                    // root
                     getFilesStatPromise(filename).then(function (list) {
                         renderDirPage(pathname, list);
                     }).catch(error);
-                    // root
                     break;
                 }
             default:
@@ -80,6 +81,16 @@ module.exports = function (options) {
                     helper.statPromise(filename).then(function (stat) {
                         if (stat.isDirectory()) {
                             return getFilesStatPromise(filename).then(function (list) {
+                                var parent = path.dirname(filename);
+                                var parentStat = fs.statSync(parent);
+                                list.unshift({
+                                    type: "Directory",
+                                    size: "-",
+                                    name: "..",
+                                    mtime: new Date(parentStat.mtime).format(),
+                                    ctime: new Date(parentStat.ctime).format()
+                                });
+
                                 renderDirPage(pathname, list);
                             }).catch(error);
                         } else {
@@ -89,7 +100,7 @@ module.exports = function (options) {
                                 res.sendFile(filename);
                             }
                         }
-                    });
+                    }).catch(error);
                 }
         }
     };

@@ -6,7 +6,7 @@
 
 Date.prototype.format = function (fmt) {
     //author: meizz
-    fmt = fmt || 'yyyy/MM/dd hh:mm';
+    fmt = fmt || 'yyyy-MM-dd hh:mm:ss';
     var o = {
         "M+": this.getMonth() + 1, //月份
         "d+": this.getDate(), //日

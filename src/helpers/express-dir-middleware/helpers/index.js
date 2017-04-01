@@ -3,7 +3,7 @@
  */
 
 Date.prototype.format = function (fmt) { //author: meizz
-    fmt = fmt || 'yyyy/MM/dd hh:mm';
+    fmt = fmt || 'yyyy-MM-dd hh:mm:ss';
     var o = {
         "M+": this.getMonth() + 1, //月份
         "d+": this.getDate(), //日
@@ -20,14 +20,14 @@ Date.prototype.format = function (fmt) { //author: meizz
 }
 
 Number.prototype.toSize = function () {
-    if(this<1024){
-        return this+"B";
-    }else if(this<1024<<10){
-        return (this/1024).toFixed(2)+"KB";
-    }else if(this<1024<<20){
-        return (this/(1024<<10)).toFixed(2)+"MB";
-    }else{
-        return (this/(1024<<20)).toFixed(2)+"GB";
+    if (this < 1024) {
+        return this + "B";
+    } else if (this < 1024 << 10) {
+        return (this / 1024).toFixed(2) + "KB";
+    } else if (this < 1024 << 20) {
+        return (this / (1024 << 10)).toFixed(2) + "MB";
+    } else {
+        return (this / (1024 << 20)).toFixed(2) + "GB";
     }
 }
 
