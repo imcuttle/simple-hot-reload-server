@@ -5,11 +5,13 @@
  */
 
 !function (DATA) {
+    var query = location.search;
     var dataHrsLocalScript = document.querySelector('script[hrs-local]');
     if (dataHrsLocalScript) {
         DATA = DATA || {};
         var src = dataHrsLocalScript.getAttribute('src');
         var mather = src.match(/[^\?]+:(\d+)/);
+        query = src.split('?')[1];
         if (mather.length >= 2) {
             DATA.port = mather[1];
         } else {
@@ -133,8 +135,8 @@
     /* query string tag ?debug=true&reload=false */
     var debug = false;
 
-    if (location.search) {
-        var queryJson = getQueryJson(location.search);
+    if (query) {
+        var queryJson = getQueryJson(query);
         if (queryJson['debug'] && queryJson['debug'] != 'false') {
             debug = true;
             debugEntry();
@@ -152,7 +154,7 @@
                 console[name] = function () {
                     var args = [].slice.call(arguments).map(function (arg) {
                         if (arg instanceof Error) {
-                            return arg.message;
+                            return arg.stack;
                         }
                         return arg;
                     });

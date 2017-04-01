@@ -7,14 +7,15 @@ connected server and client by WebSocket.
 *Important: Only support files which filename ends with `.html/.htm` or is required by html/htm*
 
 
-**Hot Reload**
+- **Hot Reload**
 ![](https://ooo.0o0.ooo/2017/03/31/58de5c97bfa0b.jpg)
 
-**Debugger**
+- **Debugger**
 ![](https://ooo.0o0.ooo/2017/03/31/58de5c83f0eac.jpg)
 
-**Files View (Easy to open page in root)**
-![](https://ooo.0o0.ooo/2017/04/01/58df85ceaeef5.jpg)
+- **Files View (Easy to open page in root)**
+`http://localhost:8082/__hrs__/file`
+![](https://ooo.0o0.ooo/2017/04/01/58df9961dd9b2.jpg)
 
 
 ```bash
@@ -53,7 +54,7 @@ Options:
 2. insert script in HTML manually.
     ```html
     <script
-        src="http://localhost:8082/__hrs__/client-script.js"
+        src="http://localhost:8082/__hrs__/client-script.js?reload=false&debug=true"
         hrs-local="/Users/moyu/fe-code/a/b/jsonp.html"
         hrs-root="/Users/moyu/fe-code"
     >
