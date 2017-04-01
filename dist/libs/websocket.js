@@ -71,15 +71,16 @@ module.exports = function run(dirPath, options) {
                             app.setPathMap(path.join(dirPath, _relativePath));
                         } else {
                             var absolutePath = json.value;
-                            if (ft.isHTML(absolutePath)) {
-                                // not in workspace
-                                var myRoot = json.root ? !path.isAbsolute(json.root) ? path.join(absolutePath, json.root) : json.root : path.dirname(absolutePath);
-                                // console.log('root: %s, file: %s', myRoot, absolutePath);
-                                var handleFileChange = require('../').handleFileChange;
-                                app.setPathMap(absolutePath).then(function () {
-                                    ws.watcher = new FileWatcher(myRoot, { recursive: true }).on('change', handleFileChange);
-                                });
-                            }
+                            // if (ft.isHTML(absolutePath)) {
+                            // not in workspace
+                            var myRoot = json.root ? !path.isAbsolute(json.root) ? path.join(absolutePath, json.root) : json.root : path.dirname(absolutePath);
+
+                            !app.pathMap.exists(absolutePath) && console.log('[CORS] root: %s, file: %s', myRoot, absolutePath);
+                            var handleFileChange = require('../').handleFileChange;
+                            app.setPathMap(absolutePath).then(function () {
+                                ws.watcher = new FileWatcher(myRoot, { recursive: true }).on('change', handleFileChange);
+                            });
+                            // }
                         }
                         break;
                     case 'same-origin':

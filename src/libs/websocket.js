@@ -64,16 +64,18 @@ module.exports = function run (dirPath, options) {
                             app.setPathMap(path.join(dirPath, relativePath));
                         } else {
                             let absolutePath = json.value;
-                            if (ft.isHTML(absolutePath)) {
+                            // if (ft.isHTML(absolutePath)) {
                                 // not in workspace
                                 let myRoot = json.root ? (!path.isAbsolute(json.root) ? path.join(absolutePath, json.root) : json.root) : path.dirname(absolutePath);
-                                // console.log('root: %s, file: %s', myRoot, absolutePath);
+
+                                !app.pathMap.exists(absolutePath)
+                                    && console.log('[CORS] root: %s, file: %s', myRoot, absolutePath);
                                 const handleFileChange = require('../').handleFileChange;
                                 app.setPathMap(absolutePath).then(() => {
                                     ws.watcher = new FileWatcher(myRoot, {recursive: true})
                                         .on('change', handleFileChange);
                                 });
-                            }
+                            // }
                         }
                         break;
                     case 'same-origin':

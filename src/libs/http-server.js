@@ -37,15 +37,13 @@ app.use(FORWARD_ROUTE, (req, res, next) => {
 });
 
 app.setPathMap = function (absolutePath, force) {
-    if (ft.isHTML(absolutePath)) {
-        if (force || !pathMap.exists(absolutePath)) {
-            return readFilePromise(absolutePath)
-                .then(buf => {
-                    let editor = new HTMLEditor(buf.toString(), absolutePath);
-                    pathMap.set(absolutePath, editor.getComputedPathMap());
-                    return true;
-                })
-        }
+    if ( fs.existsSync(absolutePath) && (force || !pathMap.exists(absolutePath)) ) {
+        return readFilePromise(absolutePath)
+            .then(buf => {
+                let editor = new HTMLEditor(buf.toString(), absolutePath);
+                pathMap.set(absolutePath, editor.getComputedPathMap());
+                return true;
+            })
     }
     return Promise.resolve(false);
 };

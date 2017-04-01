@@ -57,8 +57,8 @@ exports.handleFileChange = function (eventType, filename) {
 
         return path.isAbsolute(client.registerData.value) ? client.registerData.value == path.join(_this.filename, name) : client.registerData.value == name;
     };
-    if (ft.isHTML(filename)) {
-        var absolutePath = path.join(this.filename, filename);
+    var absolutePath = path.join(this.filename, filename);
+    if ( /*ft.isHTML(filename)*/app.pathMap.exists(absolutePath)) {
         app.setPathMap(absolutePath, true).then(function () {
             log();
             wss.broadcast(['log', 'reload'], [filename + ' => ' + eventType, null], filter);
