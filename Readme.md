@@ -1,6 +1,6 @@
 # Simple Hot Reload Server
 
-[![NPM](https://www.npmjs.com/package/simple-hot-reload-server)](https://nodei.co/npm/simple-hot-reload-server.png?downloads=true&downloadRank=true&stars=true)
+[![NPM](https://nodei.co/npm/simple-hot-reload-server.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/simple-hot-reload-server)
 
 Set up a server for frontend files(html/css/js/favicon) & Watch frontend files.
 
