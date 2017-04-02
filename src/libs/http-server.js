@@ -90,7 +90,8 @@ function startServer() {
                         html = editor.append(`window.__HRS_DATA__=${JSON.stringify(injectGlobalData)}`, 'js')
                             .append(clientScriptSrc, 'jsSrc')
                             .getComputedHTML();
-                        res.contentType('text/html; charset=utf-8');
+
+                        res.contentType(path.basename(filename));
                         res.send(html);
                     })
             } else {

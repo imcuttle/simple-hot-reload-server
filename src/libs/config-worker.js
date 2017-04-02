@@ -2,10 +2,11 @@
  * Created by moyu on 2017/3/28.
  */
 const url = require('url');
+const ft = require('../helpers/file-type');
 const forward = require('../helpers/forward-request');
 
 module.exports = function (config={}, {app}) {
-    const {setUp, proxy} = config;
+    const {setUp, proxy, hotRule} = config;
 
     if (typeof proxy === 'object') {
         Object.keys(proxy)
@@ -22,6 +23,16 @@ module.exports = function (config={}, {app}) {
                         .catch(err => console.error(err));
                 });
             })
+    }
+
+    if (typeof hotRule === 'function') {
+        ft.isHTML = function (filename) {
+            return hotRule(filename);
+        };
+    } else if (hotRule instanceof RegExp) {
+        ft.isHTML = function (filename) {
+            return hotRule.test(filename);
+        };
     }
 
     if (typeof setUp === 'function') {

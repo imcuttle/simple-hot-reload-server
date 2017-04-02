@@ -4,15 +4,17 @@
 
 module.exports = {
     proxy: {
-        "/": {
+        "/php": {
             redirect: true, // default: true
-            target: "http://localhost:8083",//"http://localhost:6999",
+            target: "http://localhost:63343/start/",//"http://localhost:6999",
             headers: {
                 "Cookie": "_ga=GA1.2.652043234.1486895648; _gat=1; connect.sid=s%3AZp8YLU6HhQuJOloEg-GzF3y66M2CGXxq.pt7S%2FQ1ILKn5LKRTOuHWdoODj32BlGc4d3od%2BU7Qgvo",
             },
-            changeHost: true  // default: true
+            changeHost: true,  // default: true
         }
     },
+
+    // hotRule: /\.(html|htm)$/, // default: /\.(html|htm)$/
 
     setUp: function (app) {
         /* app is an express server object. */

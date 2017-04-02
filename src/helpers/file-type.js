@@ -4,5 +4,5 @@
 const isHTML = (filename) => /\.(html|htm)$/.test(filename);
 
 module.exports = {
-    isHTML
-}
+    isHTML,
+};

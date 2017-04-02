@@ -6,6 +6,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * Created by moyu on 2017/3/28.
  */
 var url = require('url');
+var ft = require('../helpers/file-type');
 var forward = require('../helpers/forward-request');
 
 module.exports = function () {
@@ -13,7 +14,8 @@ module.exports = function () {
     var _ref = arguments[1];
     var app = _ref.app;
     var setUp = config.setUp,
-        proxy = config.proxy;
+        proxy = config.proxy,
+        hotRule = config.hotRule;
 
 
     if ((typeof proxy === 'undefined' ? 'undefined' : _typeof(proxy)) === 'object') {
@@ -32,6 +34,16 @@ module.exports = function () {
                 });
             });
         });
+    }
+
+    if (typeof hotRule === 'function') {
+        ft.isHTML = function (filename) {
+            return hotRule(filename);
+        };
+    } else if (hotRule instanceof RegExp) {
+        ft.isHTML = function (filename) {
+            return hotRule.test(filename);
+        };
     }
 
     if (typeof setUp === 'function') {
