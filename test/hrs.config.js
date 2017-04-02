@@ -4,13 +4,13 @@
 
 module.exports = {
     proxy: {
-        "/api": {
+        "/": {
             redirect: true, // default: true
-            target: "http://blog.moyuyc.xyz/api",
+            target: "http://localhost:8083",//"http://localhost:6999",
             headers: {
-                "Cookie": "HRS.ID=HRS.TEST;",
+                "Cookie": "_ga=GA1.2.652043234.1486895648; _gat=1; connect.sid=s%3AZp8YLU6HhQuJOloEg-GzF3y66M2CGXxq.pt7S%2FQ1ILKn5LKRTOuHWdoODj32BlGc4d3od%2BU7Qgvo",
             },
-            changeHost: false  // default: true
+            changeHost: true  // default: true
         }
     },
 

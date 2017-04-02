@@ -12,8 +12,8 @@ module.exports = function ({port=8082, path=".", config}) {
     const app = startServer();
 
     const server = connect(app, port, function () {
-        console.log('Map Data  ->  http://localhost:%d%s', port, app.MAP_ROUTE)
-        console.log('File View  ->  http://localhost:%d%s', port, app.FILE_VIEW_ROUTE)
+        console.log('Map Data  ->  http://localhost:%d%s', port, app.MAP_ROUTE);
+        console.log('File View  ->  http://localhost:%d%s', port, app.FILE_VIEW_ROUTE);
     });
 
     path = p.resolve(path);

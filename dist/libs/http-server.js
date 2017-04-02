@@ -59,9 +59,9 @@ function startServer() {
         var serverPath = options.serverPath || '/';
         var injectGlobalData = options.injectGlobalData || {};
 
-        app.use(dirMiddleware({
+        app.use(FILE_VIEW_ROUTE, dirMiddleware({
             redirect: true,
-            route: FILE_VIEW_ROUTE, root: dirPath, app: app
+            root: dirPath, app: app
         }));
 
         console.log('%s register on %s', dirPath, serverPath);
@@ -75,6 +75,7 @@ function startServer() {
             var stat = fs.statSync(filename);
             if (stat.isDirectory()) {
                 filename = path.join(filename, 'index.html');
+                !fs.existsSync(filename) && next();
             }
 
             if (ft.isHTML(filename)) {
@@ -110,6 +111,7 @@ function startServer() {
             var stat = fs.statSync(filename);
             if (stat.isDirectory()) {
                 filename = path.join(filename, 'index.html');
+                !fs.existsSync(filename) && next();
             }
 
             if (ft.isHTML(filename)) {
@@ -124,6 +126,7 @@ function startServer() {
             }
         });
     };
+
     return app;
 }
 

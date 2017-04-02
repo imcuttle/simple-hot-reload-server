@@ -25,8 +25,7 @@ var getFilesStatPromise = function getFilesStatPromise(dirname) {
 };
 
 module.exports = function (options) {
-    var route = options.route,
-        root = options.root,
+    var root = options.root,
         app = options.app,
         _options$redirect = options.redirect,
         redirect = _options$redirect === undefined ? false : _options$redirect;
@@ -46,13 +45,13 @@ module.exports = function (options) {
                 }
             });
         };
+        var route = req.baseUrl;
 
         if (!app.__file_flag__) {
             app.set('views', path.join(__dirname, 'views'));
             app.set('view engine', 'pug');
             app.__file_flag__ = true;
         }
-
         if (!req.originalUrl.startsWith(route)) {
             next();
             return;

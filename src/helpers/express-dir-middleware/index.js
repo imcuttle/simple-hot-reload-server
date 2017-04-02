@@ -28,7 +28,7 @@ const getFilesStatPromise = (dirname) => {
 
 
 module.exports = function (options) {
-    const {route, root, app, redirect= false} = options;
+    const {root, app, redirect= false} = options;
     return function (req, res, next) {
         const error = (error) => res.send(error);
 
@@ -42,14 +42,13 @@ module.exports = function (options) {
                 }
             })
         };
-
+        let route = req.baseUrl;
 
         if (!app.__file_flag__) {
             app.set('views', path.join(__dirname, 'views'));
             app.set('view engine', 'pug');
             app.__file_flag__ = true;
         }
-
         if (!req.originalUrl.startsWith(route)) {
             next();
             return;

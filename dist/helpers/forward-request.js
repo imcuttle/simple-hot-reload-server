@@ -24,6 +24,7 @@ function forwardRequest(req, res, url) {
     // console.log(headers);
     var urlOptions = {
         host: urlAsg.host,
+        hostname: urlAsg.hostname,
         port: urlAsg.port || 80,
         path: urlAsg.path,
         method: req.method,
@@ -37,7 +38,7 @@ function forwardRequest(req, res, url) {
         var forward_request = protocol.request(urlOptions, function (response) {
             var code = response.statusCode;
             // console.log(code, response.headers, redirect);
-            if (redirect && (code === 302 || code === 301)) {
+            if (!redirect && (code === 302 || code === 301)) {
                 var location = response.headers.location;
                 response.destroy();
                 forward_request.abort();
