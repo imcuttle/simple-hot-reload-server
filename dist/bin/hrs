@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+const path = require('path');
+const fs = require('fs');
+const args = require('minimist')(process.argv.slice(2));
+
+const DEFAULT_POST = 8082;
+const options = {
+    help: args.h || args.help,
+    path: args._.length === 0 ? process.cwd() : path.resolve(args._[0]),
+    port: args.p || args.port || DEFAULT_POST,
+    version: args.v || args.version
+};
+
+if (options.help) {
+    console.log(
+`  Usage: hrs [-p port] path
+  
+  Options:
+    
+    -v --version                get current version.
+    -p --port                   set port of server.(default: ${DEFAULT_POST})
+    -h --help                   how to use it.
+`
+    );
+
+    process.exit(0);
+}
+
+if (options.version) {
+    console.log(require('./package.json').version);
+    process.exit(0);
+}
+if (!fs.existsSync(options.path) || !fs.statSync(options.path).isDirectory()) {
+    console.error(`${options.path} not existed or is NOT a directory`);
+    process.exit(1);
+}
+
+
+const configPath = path.resolve('./hrs.config.js');
+if (fs.existsSync(configPath)) {
+    const config = require(configPath);
+    options.config = config;
+}
+
+require('../index')({
+    port: options.port,
+    config: options.config,
+    path: options.path
+});
+
+

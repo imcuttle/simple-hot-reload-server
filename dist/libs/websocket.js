@@ -6,7 +6,6 @@
 var WebSocket = require('ws');
 var url = require('url');
 var path = require('path');
-var app = require('./http-server');
 var readFilePromise = require('../helpers/readfile-promise');
 var ft = require('../helpers/file-type');
 var FileWatcher = require('./FileWatcher');
@@ -21,7 +20,7 @@ var obj = function obj(type, data) {
     return JSON.stringify({ type: type, data: data });
 };
 
-module.exports = function run(dirPath, options) {
+module.exports = function run(dirPath, app, options) {
     var wss = new WebSocket.Server(options);
 
     function broadcast() {
@@ -76,9 +75,12 @@ module.exports = function run(dirPath, options) {
                             var myRoot = json.root ? !path.isAbsolute(json.root) ? path.join(absolutePath, json.root) : json.root : path.dirname(absolutePath);
 
                             !app.pathMap.exists(absolutePath) && console.log('[CORS] root: %s, file: %s', myRoot, absolutePath);
-                            var handleFileChange = require('../').handleFileChange;
+
+                            var _require = require('../'),
+                                registerFileWatcher = _require.registerFileWatcher;
+
                             app.setPathMap(absolutePath).then(function () {
-                                ws.watcher = new FileWatcher(myRoot, { recursive: true }).on('change', handleFileChange);
+                                ws.watcher = registerFileWatcher(myRoot, { recursive: true });
                             });
                             // }
                         }

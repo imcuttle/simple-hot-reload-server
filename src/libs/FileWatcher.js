@@ -18,6 +18,9 @@ FileWatcher.prototype = {
         this.__watch.close();
         delete this;
     },
+    close: function () {
+        return this.unwatch();
+    },
     on: function (type, func) {
         func = func.bind(this);
         arguments[1] = func;
