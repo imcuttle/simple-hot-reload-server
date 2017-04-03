@@ -2,6 +2,8 @@
 
 [![NPM](https://nodei.co/npm/simple-hot-reload-server.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/simple-hot-reload-server)
 
+[中文文档点这](http://blog.moyuyc.xyz/article/say-goodbye-to-manual-refresh)
+
 Set up a server for frontend files(html/css/js/favicon) & Watch frontend files.
 
 connected server and client by WebSocket.
@@ -20,21 +22,21 @@ connected server and client by WebSocket.
 
 - **Source Map Preview**
 
-1. Single  
-    `http://localhost:8082/index.html.hrs.map`
-    ```json
-    {
-        "/Users/moyu/my-code/JavaCode/dike/js/jquery-1.9.1.js": "../../js/jquery-1.9.1.js",
-        "/Users/moyu/my-code/JavaCode/dike/js/bootstrap.js": "../../js/bootstrap.js",
-        "/Users/moyu/my-code/JavaCode/dike/js/navbar.js": "../../js/navbar.js",
-        "/Users/moyu/my-code/JavaCode/dike/css/font-awesome.min.css": "../../css/font-awesome.min.css",
-        "/Users/moyu/my-code/JavaCode/dike/css/navbar.css": "../../css/navbar.css",
-        "/Users/moyu/my-code/JavaCode/dike/css/conceptModel.css": "../../css/conceptModel.css",
-        "/Users/moyu/my-code/JavaCode/dike/css/dropzone/dropzone.css": "../../css/dropzone/dropzone.css"
-    }
-    ```
-2. Total  
-    `http://localhost:8082/__hrs__/map`
+    1. Single  
+        `http://localhost:8082/index.html.hrs.map`
+        ```json
+        {
+            "/Users/moyu/my-code/JavaCode/dike/js/jquery-1.9.1.js": "../../js/jquery-1.9.1.js",
+            "/Users/moyu/my-code/JavaCode/dike/js/bootstrap.js": "../../js/bootstrap.js",
+            "/Users/moyu/my-code/JavaCode/dike/js/navbar.js": "../../js/navbar.js",
+            "/Users/moyu/my-code/JavaCode/dike/css/font-awesome.min.css": "../../css/font-awesome.min.css",
+            "/Users/moyu/my-code/JavaCode/dike/css/navbar.css": "../../css/navbar.css",
+            "/Users/moyu/my-code/JavaCode/dike/css/conceptModel.css": "../../css/conceptModel.css",
+            "/Users/moyu/my-code/JavaCode/dike/css/dropzone/dropzone.css": "../../css/dropzone/dropzone.css"
+        }
+        ```
+    2. Total  
+        `http://localhost:8082/__hrs__/map`
 
 - **Forward Request**  
     `http://localhost:8082/__hrs__/forward?url=http://blog.moyuyc.xyz/head.jpg`
@@ -99,7 +101,8 @@ Usage: hrs [-p port] path
 Options:
 
   -v --version                get current version.
-  -p --port                   set port of server.(default: 8082)
+  -p --port                   set port of server. (default: 8082)
+  -c --config                 config path. (default hrs.config.js)
   -h --help                   how to use it.
 ```
 
