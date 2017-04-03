@@ -13,7 +13,7 @@ var HTMLEditor = require('./HtmlEditor');
 var ft = require('../helpers/file-type');
 var KVStorage = require('../helpers/KVStorage');
 var forward = require('../helpers/forward-request');
-var dirMiddleware = require('../helpers/express-dir-middleware');
+var dirMiddleware = require('../../node_modules/express-dirview-middleware');
 
 function startServer() {
     var app = express();
@@ -75,7 +75,7 @@ function startServer() {
 
         app.use(FILE_VIEW_ROUTE, dirMiddleware({
             redirect: true,
-            root: dirPath, app: app
+            root: dirPath
         }));
 
         console.log('%s register on %s', dirPath, serverPath);

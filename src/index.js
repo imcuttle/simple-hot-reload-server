@@ -7,9 +7,9 @@ const connect = require('./helpers/connect-ws-server');
 const ft = require('./helpers/file-type');
 const FileWatcher = require('./libs/FileWatcher');
 
-
 module.exports = function ({port=8082, path=".", config}) {
     const app = startServer();
+
 
     const server = connect(app, port, function () {
         console.log('Map Data  ->  http://localhost:%d%s', port, app.MAP_ROUTE);
