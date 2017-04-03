@@ -50,6 +50,17 @@ function startServer() {
     };
 
 
+    const injectHotHtml = app.injectHotHtml = function ({html, scriptAttr, filename, injectGlobalData}) {
+        const clientScriptSrc = `/__hrs__/client-script.js`;
+        let editor = new HTMLEditor(html, filename);
+        if (!pathMap.exists(filename)) {
+            pathMap.set(filename, editor.getComputedPathMap())
+        }
+        return editor.append(`window.__HRS_DATA__=${JSON.stringify(injectGlobalData)}`, 'js')
+            .append(clientScriptSrc, 'jsSrc', scriptAttr)
+            .getComputedHTML();
+    };
+
     /**
      *
      * @param options: object {path: string, serverPath: string, injectGlobalData: {port: number}}
@@ -82,14 +93,7 @@ function startServer() {
                 readFilePromise(filename)
                     .then(buffer => {
                         let html = buffer.toString();
-                        const clientScriptSrc = `/__hrs__/client-script.js`;
-                        let editor = new HTMLEditor(html, filename);
-                        if (!pathMap.exists(filename)) {
-                            pathMap.set(filename, editor.getComputedPathMap())
-                        }
-                        html = editor.append(`window.__HRS_DATA__=${JSON.stringify(injectGlobalData)}`, 'js')
-                            .append(clientScriptSrc, 'jsSrc')
-                            .getComputedHTML();
+                        html = injectHotHtml({html, filename, injectGlobalData});
 
                         res.contentType(path.basename(filename));
                         res.send(html);

@@ -6,8 +6,11 @@ const url = require('url');
 const path = require('path');
 const readFilePromise = require('../helpers/readfile-promise');
 const ft = require('../helpers/file-type');
+const KVStorage = require('../helpers/KVStorage');
 const FileWatcher = require('./FileWatcher');
 const HTMLEditor = require('./HtmlEditor');
+
+const watcherDB = new KVStorage();
 
 const obj = (type, data) => {
     if (Array.isArray(type)) {
@@ -44,7 +47,11 @@ module.exports = function run (dirPath, app, options) {
         initSocket(ws);
         ws.log('connected!');
         ws.on('close', () => {
-            ws.watcher && ws.watcher.close();
+            if(ws.watcher) {
+                ws.watcher.close();
+                watcherDB.rm(ws.watcher.filename);
+                delete ws.watcher;
+            }
         });
         ws.on('message', function (data) {
             data = JSON.parse(data);
@@ -65,14 +72,17 @@ module.exports = function run (dirPath, app, options) {
                             let absolutePath = json.value;
                             // if (ft.isHTML(absolutePath)) {
                                 // not in workspace
-                                let myRoot = json.root ? (!path.isAbsolute(json.root) ? path.join(absolutePath, json.root) : json.root) : path.dirname(absolutePath);
+                            let myRoot = json.root ? (!path.isAbsolute(json.root) ? path.join(absolutePath, json.root) : json.root) : path.dirname(absolutePath);
 
-                                !app.pathMap.exists(absolutePath)
-                                    && console.log('[CORS] root: %s, file: %s', myRoot, absolutePath);
-                                const {registerFileWatcher} = require('../');
-                                app.setPathMap(absolutePath).then(() => {
-                                    ws.watcher = registerFileWatcher(myRoot, {recursive: true})
-                                });
+                            !app.pathMap.exists(absolutePath)
+                                && console.log('[CORS] root: %s, file: %s', myRoot, absolutePath);
+                            const {registerFileWatcher} = require('../');
+                            app.setPathMap(absolutePath).then(() => {
+                                if (!watcherDB.exists(myRoot)) {
+                                    watcherDB.set(myRoot, true);
+                                    ws.watcher = registerFileWatcher(myRoot, {recursive: true});
+                                }
+                            });
                             // }
                         }
                         break;

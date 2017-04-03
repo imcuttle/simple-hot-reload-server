@@ -9,13 +9,15 @@
     var dataHrsLocalScript = document.querySelector('script[hrs-local]');
     if (dataHrsLocalScript) {
         DATA = DATA || {};
-        var src = dataHrsLocalScript.getAttribute('src');
-        var mather = src.match(/[^\?]+:(\d+)/);
-        query = src.split('?')[1];
-        if (mather.length >= 2) {
-            DATA.port = mather[1];
-        } else {
-            DATA.port = 80;
+        if (!DATA.port) {
+            var src = dataHrsLocalScript.getAttribute('src');
+            var mather = src.match(/[^\?]+:(\d+)/);
+            query = src.split('?')[1];
+            if (mather.length >= 2) {
+                DATA.port = mather[1];
+            } else {
+                DATA.port = 80;
+            }
         }
     }
 

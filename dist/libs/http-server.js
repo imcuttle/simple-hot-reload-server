@@ -50,6 +50,20 @@ function startServer() {
         return Promise.resolve(false);
     };
 
+    var injectHotHtml = app.injectHotHtml = function (_ref) {
+        var html = _ref.html,
+            scriptAttr = _ref.scriptAttr,
+            filename = _ref.filename,
+            injectGlobalData = _ref.injectGlobalData;
+
+        var clientScriptSrc = '/__hrs__/client-script.js';
+        var editor = new HTMLEditor(html, filename);
+        if (!pathMap.exists(filename)) {
+            pathMap.set(filename, editor.getComputedPathMap());
+        }
+        return editor.append('window.__HRS_DATA__=' + JSON.stringify(injectGlobalData), 'js').append(clientScriptSrc, 'jsSrc', scriptAttr).getComputedHTML();
+    };
+
     /**
      *
      * @param options: object {path: string, serverPath: string, injectGlobalData: {port: number}}
@@ -81,12 +95,7 @@ function startServer() {
             if (ft.isHTML(filename)) {
                 readFilePromise(filename).then(function (buffer) {
                     var html = buffer.toString();
-                    var clientScriptSrc = '/__hrs__/client-script.js';
-                    var editor = new HTMLEditor(html, filename);
-                    if (!pathMap.exists(filename)) {
-                        pathMap.set(filename, editor.getComputedPathMap());
-                    }
-                    html = editor.append('window.__HRS_DATA__=' + JSON.stringify(injectGlobalData), 'js').append(clientScriptSrc, 'jsSrc').getComputedHTML();
+                    html = injectHotHtml({ html: html, filename: filename, injectGlobalData: injectGlobalData });
 
                     res.contentType(path.basename(filename));
                     res.send(html);

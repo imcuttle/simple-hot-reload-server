@@ -26,17 +26,16 @@ module.exports = function (_ref) {
     path = p.resolve(path);
     var wss = createWss(path, app, { server: server });
 
+    var injectGlobalData = { port: port };
     if (config) {
         var configWorker = require('./libs/config-worker');
-        configWorker(config, { app: app });
+        configWorker(config, { app: app, injectGlobalData: injectGlobalData });
         console.log("Config is Working!");
     }
 
     app.setStatic({
         path: path,
-        injectGlobalData: {
-            port: port
-        }
+        injectGlobalData: injectGlobalData
     });
 
     var handleFileChange = function handleFileChange(eventType, filename) {

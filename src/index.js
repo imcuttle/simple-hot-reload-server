@@ -19,17 +19,16 @@ module.exports = function ({port=8082, path=".", config}) {
     path = p.resolve(path);
     const wss = createWss(path, app, {server});
 
+    const injectGlobalData = {port};
     if (config) {
         const configWorker = require('./libs/config-worker');
-        configWorker(config, {app});
+        configWorker(config, {app, injectGlobalData});
         console.log("Config is Working!");
     }
 
     app.setStatic({
         path,
-        injectGlobalData: {
-            port
-        }
+        injectGlobalData
     });
 
     const handleFileChange = function (eventType, filename) {

@@ -4,7 +4,10 @@
 const URL = require('url')
 
 function forwardRequest(req, res, url, opts={}) {
-    const {redirect=true, changeHost=true, headers: optHeaders} = opts;
+    const {
+        redirect=true, changeHost=true, headers: optHeaders,
+        responseHandle,
+    } = opts;
     const urlAsg = URL.parse(url, true);
     const headers = Object.assign({}, req.headers, optHeaders);
     if (changeHost) {
@@ -40,8 +43,25 @@ function forwardRequest(req, res, url, opts={}) {
                     .then(resolve, reject);
                 return;
             }
-            res.writeHead(code, response.headers);
-            response.pipe(res);
+
+            res.statusCode = response.statusCode;
+            res.statusMessage = response.statusMessage;
+            Object.keys(response.headers).forEach(name => {
+                let segs = name.split('-');
+                segs = segs.map(seg => {
+                    seg = seg[0].toUpperCase() + seg.substr(1);
+                    return seg;
+                });
+                let camelName = segs.join('-');
+                res.setHeader(camelName, response.headers[name]);
+            });
+
+            // console.log(response.headers);
+            if (typeof responseHandle === 'function') {
+                responseHandle(response, res);
+            } else {
+                response.pipe(res);
+            }
             response.on('end', function () {
                 resolve(true);
             })
@@ -49,9 +69,11 @@ function forwardRequest(req, res, url, opts={}) {
 
 
         forward_request.on('error', function (e) {
-            res.writeHead(500);
-            res.end('problem with request: ' + e.message);
             // console.error('problem with request: ' + e.message);
+            // if (!res.finished) {
+            //     !res.headersSent && res.writeHead(500);
+            //     res.end('problem with request: ' + e.message);
+            // }
             reject(e);
         });
 

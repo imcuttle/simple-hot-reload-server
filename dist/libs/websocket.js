@@ -8,8 +8,11 @@ var url = require('url');
 var path = require('path');
 var readFilePromise = require('../helpers/readfile-promise');
 var ft = require('../helpers/file-type');
+var KVStorage = require('../helpers/KVStorage');
 var FileWatcher = require('./FileWatcher');
 var HTMLEditor = require('./HtmlEditor');
+
+var watcherDB = new KVStorage();
 
 var obj = function obj(type, data) {
     if (Array.isArray(type)) {
@@ -51,7 +54,11 @@ module.exports = function run(dirPath, app, options) {
         initSocket(ws);
         ws.log('connected!');
         ws.on('close', function () {
-            ws.watcher && ws.watcher.close();
+            if (ws.watcher) {
+                ws.watcher.close();
+                watcherDB.rm(ws.watcher.filename);
+                delete ws.watcher;
+            }
         });
         ws.on('message', function (data) {
             data = JSON.parse(data);
@@ -80,7 +87,10 @@ module.exports = function run(dirPath, app, options) {
                                 registerFileWatcher = _require.registerFileWatcher;
 
                             app.setPathMap(absolutePath).then(function () {
-                                ws.watcher = registerFileWatcher(myRoot, { recursive: true });
+                                if (!watcherDB.exists(myRoot)) {
+                                    watcherDB.set(myRoot, true);
+                                    ws.watcher = registerFileWatcher(myRoot, { recursive: true });
+                                }
                             });
                             // }
                         }

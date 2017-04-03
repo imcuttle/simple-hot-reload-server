@@ -74,15 +74,19 @@ function getComputedHTML() {
 
 function generate(object) {
     var content = object.content;
+    var attr = object.attr || {};
+    var attrText = Object.keys(attr).map(function (name) {
+        return name + '="' + attr[name] + '"';
+    }).join(' ');
     switch (object.type) {
         case 'jsSrc':
-            return '<script type="application/javascript" src="' + content + '"></script>';
+            return '<script type="application/javascript" src="' + content + '" ' + attrText + '></script>';
         case 'js':
-            return '<script type="application/javascript">' + content + '</script>';
+            return '<script type="application/javascript" ' + attrText + '>' + content + '</script>';
         case 'cssSrc':
-            return '<link rel="stylesheet" href="' + content + '"/>';
+            return '<link rel="stylesheet" href="' + content + '" ' + attrText + '/>';
         case 'css':
-            return '<style>' + content + '</style>';
+            return '<style ' + attrText + '>' + content + '</style>';
     }
 }
 
@@ -94,7 +98,8 @@ function generateContent() {
 
 function push(content) {
     var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "jsSrc";
+    var attr = arguments[2];
 
-    this.__contents__.push({ content: content, type: type });
+    this.__contents__.push({ content: content, type: type, attr: attr });
     return this;
 }

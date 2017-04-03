@@ -2,24 +2,62 @@
  * Created by moyu on 2017/3/28.
  */
 const url = require('url');
+const path = require('path');
 const ft = require('../helpers/file-type');
+const HtmlEditor = require('../libs/HtmlEditor');
+const {registerFileWatcher} = require('../');
 const forward = require('../helpers/forward-request');
 
-module.exports = function (config={}, {app}) {
+module.exports = function (config = {}, {app, injectGlobalData}) {
     const {setUp, proxy, hotRule} = config;
 
     if (typeof proxy === 'object') {
         Object.keys(proxy)
             .forEach((route) => {
-                let {target} = proxy[route];
+                const proxyConfig = proxy[route];
+                let {target, hot, mapLocal, mapRoot} = proxyConfig;
+                delete proxyConfig['target'];
+                delete proxyConfig['hot'];
+                delete proxyConfig['mapLocal'];
+                delete proxyConfig['mapRoot'];
+
                 target = target.trim();
+
                 console.log(`Proxy created: ${route}  ->  ${target}`);
                 app.use(route, function forwardHandle(req, res, next) {
-                    target = target.endsWith('/') ? target : target+'/';
+                    target = target.endsWith('/') ? target : target + '/';
                     const rUrl = req.url.replace(/^\//, '');
                     const to = target + rUrl;
+
                     console.log('Proxy:', req.originalUrl, " -> ", to);
-                    forward(req, res, to, proxy[route])
+
+                    let localFilename = null, responseHandle = null;
+                    if (hot && typeof mapLocal === 'function'
+                        && !!(localFilename = mapLocal(req)) && ft.isHTML(localFilename)) {
+                        responseHandle = (remoteRes, res) => {
+                            let rootDir = typeof mapRoot === 'function'? mapRoot(req): mapRoot;
+                            let text = '';
+                            remoteRes.setEncoding(null);
+                            remoteRes.on('data', (chunk) => text+=chunk)
+                            remoteRes.on('end', () => {
+                                const html = app.injectHotHtml({
+                                    html: text, filename: localFilename,
+                                    injectGlobalData,
+                                    scriptAttr: {
+                                        'hrs-local': path.resolve(localFilename),
+                                        'hrs-root': rootDir
+                                    }
+                                });
+                                res.getHeader('content-length') && res.setHeader('content-length', html.length);
+                                res.end(html);
+
+                            });
+                        }
+                    }
+
+                    console.log(localFilename, responseHandle);
+                    proxyConfig.responseHandle = responseHandle;
+                    forward(req, res, to, proxyConfig)
                         .catch(err => console.error(err));
                 });
             })
