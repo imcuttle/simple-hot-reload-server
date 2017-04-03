@@ -15,11 +15,19 @@ module.exports = function (config = {}, {app, injectGlobalData}) {
         Object.keys(proxy)
             .forEach((route) => {
                 const proxyConfig = proxy[route];
-                let {target, hot, mapLocal, mapRoot} = proxyConfig;
+                let {target, hot, mapLocal, mapRoot, hotRule} = proxyConfig;
                 delete proxyConfig['target'];
                 delete proxyConfig['hot'];
                 delete proxyConfig['mapLocal'];
                 delete proxyConfig['mapRoot'];
+                delete proxyConfig['hotRule'];
+
+                let isValidHot = ft.isHTML;
+                if (hotRule instanceof RegExp) {
+                    isValidHot = (filename) => hotRule.test(filename);
+                } else if (typeof hotRule === 'function') {
+                    isValidHot = hotRule;
+                }
 
                 target = target.trim();
 
@@ -33,12 +41,12 @@ module.exports = function (config = {}, {app, injectGlobalData}) {
 
                     let localFilename = null, responseHandle = null;
                     if (hot && typeof mapLocal === 'function'
-                        && !!(localFilename = mapLocal(req)) && ft.isHTML(localFilename)) {
+                        && !!(localFilename = mapLocal(req)) && isValidHot(localFilename, req)) {
                         responseHandle = (remoteRes, res) => {
-                            let rootDir = typeof mapRoot === 'function'? mapRoot(req): mapRoot;
+                            let rootDir = typeof mapRoot === 'function' ? mapRoot(req) : mapRoot;
                             let text = '';
                             remoteRes.setEncoding(null);
-                            remoteRes.on('data', (chunk) => text+=chunk)
+                            remoteRes.on('data', (chunk) => text += chunk)
                             remoteRes.on('end', () => {
                                 const html = app.injectHotHtml({
                                     html: text, filename: localFilename,
@@ -55,7 +63,7 @@ module.exports = function (config = {}, {app, injectGlobalData}) {
                         }
                     }
 
-                    console.log(localFilename, responseHandle);
+                    // console.log(localFilename, responseHandle);
                     proxyConfig.responseHandle = responseHandle;
                     forward(req, res, to, proxyConfig)
                         .catch(err => console.error(err));

@@ -31,12 +31,23 @@ module.exports = function () {
             var target = proxyConfig.target,
                 hot = proxyConfig.hot,
                 mapLocal = proxyConfig.mapLocal,
-                mapRoot = proxyConfig.mapRoot;
+                mapRoot = proxyConfig.mapRoot,
+                hotRule = proxyConfig.hotRule;
 
             delete proxyConfig['target'];
             delete proxyConfig['hot'];
             delete proxyConfig['mapLocal'];
             delete proxyConfig['mapRoot'];
+            delete proxyConfig['hotRule'];
+
+            var isValidHot = ft.isHTML;
+            if (hotRule instanceof RegExp) {
+                isValidHot = function isValidHot(filename) {
+                    return hotRule.test(filename);
+                };
+            } else if (typeof hotRule === 'function') {
+                isValidHot = hotRule;
+            }
 
             target = target.trim();
 
@@ -50,7 +61,7 @@ module.exports = function () {
 
                 var localFilename = null,
                     responseHandle = null;
-                if (hot && typeof mapLocal === 'function' && !!(localFilename = mapLocal(req)) && ft.isHTML(localFilename)) {
+                if (hot && typeof mapLocal === 'function' && !!(localFilename = mapLocal(req)) && isValidHot(localFilename, req)) {
                     responseHandle = function responseHandle(remoteRes, res) {
                         var rootDir = typeof mapRoot === 'function' ? mapRoot(req) : mapRoot;
                         var text = '';
@@ -73,7 +84,7 @@ module.exports = function () {
                     };
                 }
 
-                console.log(localFilename, responseHandle);
+                // console.log(localFilename, responseHandle);
                 proxyConfig.responseHandle = responseHandle;
                 forward(req, res, to, proxyConfig).catch(function (err) {
                     return console.error(err);

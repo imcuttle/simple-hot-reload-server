@@ -42,10 +42,6 @@ connected server and client by WebSocket.
 - **Config**  
     Be Named `hrs.config.js` on current work directory.
     ```js
-    /**
-     * Created by moyu on 2017/4/2.
-     */
-    
     module.exports = {
         proxy: {
             "/api": {
@@ -57,6 +53,11 @@ connected server and client by WebSocket.
                 changeHost: true,  // default: true
     
                 hot: true, // hot reload enable? default: false
+                // Function/RegExp: will be set root config hotRule if it is null
+                hotRule: function (filename, request) {
+                    // console.log(request.url);
+                    return /\.(php)$/.test(filename);
+                },
                 // Function: return local file path
                 mapLocal: function (request) {
                     // request: Express Request Object
@@ -73,7 +74,7 @@ connected server and client by WebSocket.
         },
     
         // RegExp or function (filename) {...}
-        hotRule: /\.(html|htm|php)$/, // default: /\.(html|htm)$/
+        hotRule: /\.(html|htm)$/, // default: /\.(html|htm)$/
     
         setUp: function (app) {
             /* app is an express server object. */
