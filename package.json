@@ -25,7 +25,6 @@
     "express-dirview-middleware": "^1.0.3",
     "minimist": "^1.2.0",
     "morgan": "^1.8.1",
-    "pug": "^2.0.0-beta11",
     "ws": "^2.2.2"
   },
   "directories": {
