@@ -2,7 +2,7 @@
  * Created by moyu on 2017/3/28.
  */
 const express = require('express');
-const logger = require('morgan');
+// const logger = require('morgan');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
@@ -11,7 +11,7 @@ const HTMLEditor = require('./HtmlEditor');
 const ft = require('../helpers/file-type');
 const KVStorage = require('../helpers/KVStorage');
 const forward = require('../helpers/forward-request');
-const dirMiddleware = require('../../node_modules/express-dirview-middleware');
+const dirMiddleware = require('express-dirview-middleware');
 
 function startServer() {
     const app = express();
