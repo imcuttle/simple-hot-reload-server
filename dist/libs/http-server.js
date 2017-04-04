@@ -4,7 +4,7 @@
  * Created by moyu on 2017/3/28.
  */
 var express = require('express');
-var logger = require('morgan');
+// const logger = require('morgan');
 var url = require('url');
 var fs = require('fs');
 var path = require('path');
@@ -13,7 +13,7 @@ var HTMLEditor = require('./HtmlEditor');
 var ft = require('../helpers/file-type');
 var KVStorage = require('../helpers/KVStorage');
 var forward = require('../helpers/forward-request');
-var dirMiddleware = require('../../node_modules/express-dirview-middleware');
+var dirMiddleware = require('express-dirview-middleware');
 
 function startServer() {
     var app = express();
