@@ -30,7 +30,7 @@ if (options.help) {
 }
 
 if (options.version) {
-    console.log(require('./package.json').version);
+    console.log(require('../../package.json').version);
     process.exit(0);
 }
 if (!fs.existsSync(options.path) || !fs.statSync(options.path).isDirectory()) {
