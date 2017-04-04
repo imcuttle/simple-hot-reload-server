@@ -58,12 +58,14 @@ module.exports = function (_ref) {
         } else {
             app.pathMap.keys().forEach(function (htmlPath) {
                 var absolutePath = p.join(_this.filename, filename);
-                if (app.pathMap.get(htmlPath)[absolutePath]) {
+                var isCssChange = absolutePath.endsWith(".css");
+                var string = null;
+                if (string = app.pathMap.get(htmlPath)[absolutePath]) {
                     if (htmlPath.startsWith(_this.filename)) {
                         log();
                         var relativePath = htmlPath.substr(_this.filename.length);
                         relativePath = relativePath.startsWith('/') ? relativePath.substr(1) : relativePath;
-                        wss.broadcast(['log', 'reload'], [filename + ' => ' + eventType, null], function (client) {
+                        wss.broadcast(['log', isCssChange ? 'refreshCSS' : 'reload'], [filename + '(' + string + ') => ' + eventType, isCssChange ? [string] : null], function (client) {
                             return filter(client, relativePath);
                         });
                     }

@@ -46,14 +46,20 @@ module.exports = function ({port=8082, path=".", config}) {
         } else {
             app.pathMap.keys().forEach((htmlPath)  => {
                 const absolutePath = p.join(this.filename, filename);
-                if (app.pathMap.get(htmlPath)[absolutePath]) {
+                const isCssChange = absolutePath.endsWith(".css");
+                let string = null;
+                if (string = app.pathMap.get(htmlPath)[absolutePath]) {
                     if (htmlPath.startsWith(this.filename)) {
                         log();
                         let relativePath = htmlPath.substr(this.filename.length);
                         relativePath = relativePath.startsWith('/') ? relativePath.substr(1) : relativePath;
-                        wss.broadcast(['log', 'reload'], [`${filename} => ${eventType}`, null], (client) => {
-                            return filter(client, relativePath);
-                        });
+                        wss.broadcast(
+                            ['log', isCssChange ? 'refreshCSS' : 'reload'],
+                            [`${filename}(${string}) => ${eventType}`, isCssChange ? [string] : null],
+                            (client) => {
+                                return filter(client, relativePath);
+                            }
+                        );
                     }
                 }
             });
