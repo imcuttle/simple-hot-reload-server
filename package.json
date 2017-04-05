@@ -10,7 +10,7 @@
   },
   "main": "dist/index.js",
   "bin": {
-    "hrs": "dist/bin/hrs"
+    "hrs": "dist/bin/hrs.js"
   },
   "keywords": [
     "hot",
