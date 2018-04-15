@@ -2,7 +2,7 @@
 
 [![NPM](https://nodei.co/npm/simple-hot-reload-server.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/simple-hot-reload-server)
 
-[中文文档点这](http://blog.moyuyc.xyz/article/say-goodbye-to-manual-refresh)
+[中文文档点这](https://imcuttle.github.io/say-goodbye-to-manual-refresh)
 
 Set up a server for frontend files(html/css/js/favicon) & Watch frontend files.
 
