@@ -47,6 +47,7 @@
                 elem.setAttribute('href', url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + new Date().valueOf());
             }
 
+            // Do not change the order of stylesheet
             // head.removeChild(elem);
             // head.appendChild(elem);
             refresh = true;
