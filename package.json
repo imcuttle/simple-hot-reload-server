@@ -24,7 +24,7 @@
     "express": "^4.15.2",
     "express-dirview-middleware": "^1.0.3",
     "minimist": "^1.2.0",
-    "ws": "^2.2.2"
+    "ws": "^6.2.0"
   },
   "directories": {
     "test": "test"
