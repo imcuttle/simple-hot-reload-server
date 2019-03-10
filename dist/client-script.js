@@ -47,8 +47,8 @@
                 elem.setAttribute('href', url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + new Date().valueOf());
             }
 
-            head.removeChild(elem);
-            head.appendChild(elem);
+            // head.removeChild(elem);
+            // head.appendChild(elem);
             refresh = true;
         }
 
